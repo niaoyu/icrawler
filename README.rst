@@ -1,3 +1,41 @@
+###########################################
+第一次使用爬虫工具。。自己使用的时候，遇到下载下来的图片不正常的问题，修改相关文件后成功。
+同时参考了知乎，对代码做了以下简单修改。
+python中如何使用requests模块下载文件并获取进度提示？ - 微微寒的回答 - 知乎
+https://www.zhihu.com/question/41132103/answer/93438156
+
+1. 解决问题
+   filesystem.py
+   mode = 'w' if isinstance(data, str) else 'wb'
+   =》
+   mode = 'wb'
+
+2. 适当的修改--可以中间做一些事情。。。
+
+ download.py
+    self.storage.write(filename, response.content)
+    =>
+    self.storage.write(filename, response)
+    
+    response = self.session.get(file_url, timeout=timeout)
+    =>
+    response = self.session.get(file_url, timeout=timeout,stream=True)
+    
+ filesystem.py
+    mode = 'w' if isinstance(data, str) else 'wb'
+    with open(filepath, mode) as fout:
+         fout.write(data)
+      
+    ==>
+    
+     counter = 0
+     with open(filepath,"wb") as f:
+         for chunk in data.iter_content(chunk_size=1024): 
+             if chunk: 
+                 f.write(chunk) 
+                 f.flush()
+                 counter += 1
+
 icrawler
 ========
 
